@@ -1,0 +1,29 @@
+sprite class
+
+--should support player and nonplayer entities (fire and character)
+
+sprite class has
+-draw- array of sprites, call draw it is a method to draw the sprite
+-images array
+-animation counter (for each animation frame)
+-position(x and y)
+-height
+-width
+-scale
+-activation radius
+-hidden
+
+
+BOIDS
+
+--sprites moving according to collision/avoidance/ attraction physics
+
+sprites have acceleration, velocity, and force
+
+steering, alignment, and speed
+
+steering force = desire - velocity.
+
+
+ .. .  so i'm using a sprite sheet -- there is a way to extract each image from the sprite sheet with code or online tool
+ (pick your poison)
