@@ -43,10 +43,6 @@ class sprite{
             this.frame_counter = this.sheetBounds[0];
         }
 
-        //console.log("frame counter" + this.frame_counter);
-        //console.log(parseInt((this.img.width * this.frame_counter)/24));
-        //console.log(parseInt((this.img.width * (this.frame_counter + 2 - 1))/24));
-        //console.log(parseInt(screen.height/4));
 
         ctx.drawImage(
             this.img,
@@ -69,11 +65,6 @@ var time_delta = 150;
 var bk_img = null;
 
 s.img.onload = function() {
-    //console.log("spritesheet loaded");
-
-    //s.draw(context);
-
-//console.log("spritesheet drawn");
 
 function call_me_on_draw() {
     window.requestAnimationFrame(call_me_on_draw);
