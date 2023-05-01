@@ -14,7 +14,7 @@ class sprite{
 
     constructor(spriteSheet, amin, amax, s_height, s_width, ss_height, ss_width, context){
         this.url = spriteSheet;
-        this.x_y = [0,0];
+        this.x_y = [10,20];
         this.sh_w = [s_height,s_width];
         this.sheetBounds = [amin,amax];
         this.frame_counter = amin;
@@ -34,7 +34,7 @@ class sprite{
 
     draw(ctx){
 
-        if(this.frame_counter <= this.sheetBounds[1])
+        if(this.frame_counter < this.sheetBounds[1])
         {
             this.frame_counter++;
         }  
@@ -43,19 +43,19 @@ class sprite{
             this.frame_counter = this.sheetBounds[0];
         }
 
-        console.log("here");
-        console.log(parseInt((this.img.width * this.frame_counter)/22));
-        console.log(parseInt(screen.width/4));
-        console.log(parseInt(screen.height/4));
+        console.log("frame counter" + this.frame_counter);
+        console.log(parseInt((this.img.width * this.frame_counter)/24));
+        console.log(parseInt((this.img.width * (this.frame_counter + 2 - 1))/24));
+        //console.log(parseInt(screen.height/4));
 
         ctx.drawImage(
             this.img,
+            parseInt((this.img.width * this.frame_counter)/24),
             0,
-            0,
-            parseInt((this.img.width * this.frame_counter)/22),
+            this.sh_w[1],
             this.img.height,
-            10,
-            20,
+            this.x_y[0],
+            this.x_y[1],
             parseInt(screen.width/4),
             parseInt(screen.height/4)
             );
@@ -63,13 +63,43 @@ class sprite{
 }
 
 var context = screen.getContext("2d");
-var s = new sprite('dragon_FLY_NO_SHADOW_green.png', 0,6,96,96,96,2112);
-
+var s = new sprite('dragon_FLY_NO_SHADOW_green.png', 6,11,96,96,96,2304, context);
+var last_animation_time = new Date().getTime();
+var time_delta = 150;
+var bk_img = null;
 
 s.img.onload = function() {
     console.log("spritesheet loaded");
 
-    s.draw(context);
+    //s.draw(context);
 
 console.log("spritesheet drawn");
+
+function call_me_on_draw() {
+    window.requestAnimationFrame(call_me_on_draw);
+
+    if ((time_delta + last_animation_time) > new Date().getTime()) {
+
+        return;
+
+    }
+
+    console.log("past time delta");
+
+    last_animation_time = new Date().getTime();
+
+    if (bk_img != null) {
+
+        context.putImageData(bk_img, s.x_y[0], s.x_y[1]);
+
+    }
+
+    
+    bk_img = context.getImageData(s.x_y[0], s.x_y[1], parseInt(screen.width/4), parseInt(screen.height/4));
+
+    s.draw(context);
+
+}
+call_me_on_draw();
+
 };
