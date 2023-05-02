@@ -25,7 +25,17 @@ class sprite{
         this.velocity = [1,1];
         this.ctx = context;
         this.giveVector();
+        this.heading = 0; //heading starts at 0 degrees
+        this.referenceV = [0,0];
     }
+
+    updateAngle(){
+        this.heading = Math.acos((0*this.v[0] + 0*this.v[1])/Math.sqrt((0+(this.v[0]*this.v[0] * 0+(this.v[1]*this.v[1])))));
+        console.log("rotate " + this.heading + " radians ");
+        //this.heading = (this.heading * 180.0) / Math.PI;
+        //console.log("rotate " + this.heading + " degrees ");
+    }
+    
 
     //add vector b's xy velocities to vector a's
     addVector(va, vb){
@@ -40,17 +50,19 @@ class sprite{
 
     giveVector(){
         this.v = [Math.floor(Math.random() * 100), Math.floor(Math.random() * 100)];
+        this.updateAngle();
         //this.v[1] = Math.floor(Math.random() * 100);
     }
 
     collideWithWall(){
         this.v[0] = -1 * Math.floor(Math.random() * 100);
         this.v[1] = -1*Math.floor(Math.random() * 100);
+        this.updateAngle();
         //this.v[0] = -1 * Math.sign(this.v[0])*Math.floor(Math.random() * 100);
         //this.v[1] = -1* Math.sign(this.v[1])*Math.floor(Math.random() * 100);
         //this.v[0] = -1 * this.v[0];
         //this.v[1] = -1 * this.v[1];
-        console.log("here");
+        //console.log("here");
         //console.log(v[0]);
     }
 
@@ -77,6 +89,15 @@ class sprite{
             this.giveVector();
         }
 
+        //this.updateAngle();
+        //this.img.style.transform = 'rotate(' + this.heading + ')';
+
+        //this.ctx.save();
+        //this.ctx.translate(this.x_y[0], this.x_y[1]);
+        //this.ctx.rotate(this.heading);
+        //this.ctx.translate(-1*parseInt(this.img.height), -1*parseInt(((this.img.width * this.frame_counter)/24)/2));
+        this.ctx.translate(this.x_y[0], this.x_y[1]);
+        this.ctx.rotate(this.heading);
         ctx.drawImage(
             this.img,
             parseInt((this.img.width * this.frame_counter)/24),
@@ -88,6 +109,9 @@ class sprite{
             parseInt(screen.width/4),
             parseInt(screen.height/4)
             );
+            this.ctx.rotate(-1*this.heading);
+            this.ctx.translate(-1*this.x_y[0], -1*this.x_y[1]);
+        //this.ctx.restore();
     }
 }
 
@@ -111,6 +135,8 @@ function call_me_on_draw() {
     console.log("past time delta");
 
     last_animation_time = new Date().getTime();
+
+    //var context = screen.getContext("2d");
 
     if (bk_img != null) {
 

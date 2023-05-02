@@ -33,6 +33,12 @@ class sprite{
         this.img.src = spriteSheet;
         this.animation = [];
         this.velocity = [1,1];
+        this.heading = 0; //heading starts at 0 degrees
+        this.referenceV = [0,0];
+    }
+
+    findAngle(){
+        heading = Math.arcos((0*))
     }
 
     //add vector b's xy velocities to vector a's
