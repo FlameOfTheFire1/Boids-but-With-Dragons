@@ -24,12 +24,34 @@ class sprite{
         this.animation = [];
         this.velocity = [1,1];
         this.ctx = context;
+        this.giveVector();
     }
 
     //add vector b's xy velocities to vector a's
     addVector(va, vb){
         va[0] = va[0] + vb[0];
         va[1] = va[1] + vb[1];
+    }
+
+    updatePosition(){
+        this.x_y[0] = this.x_y[0] + this.v[0];
+        this.x_y[1] = this.x_y[1] + this.v[1];
+    }
+
+    giveVector(){
+        this.v = [Math.floor(Math.random() * 100), Math.floor(Math.random() * 100)];
+        //this.v[1] = Math.floor(Math.random() * 100);
+    }
+
+    collideWithWall(){
+        this.v[0] = -1 * Math.floor(Math.random() * 100);
+        this.v[1] = -1*Math.floor(Math.random() * 100);
+        //this.v[0] = -1 * Math.sign(this.v[0])*Math.floor(Math.random() * 100);
+        //this.v[1] = -1* Math.sign(this.v[1])*Math.floor(Math.random() * 100);
+        //this.v[0] = -1 * this.v[0];
+        //this.v[1] = -1 * this.v[1];
+        console.log("here");
+        //console.log(v[0]);
     }
 
     draw(ctx){
@@ -43,6 +65,17 @@ class sprite{
             this.frame_counter = this.sheetBounds[0];
         }
 
+        this.updatePosition();
+
+        if(this.x_y[0] > window.innerWidth || this.x_y[1] > window.innerHeight)
+        {
+            this.collideWithWall(); //give random negative vector to flip around
+        }
+        if(this.x_y[0] < 0 || this.x_y[1] < 0)
+        {
+            //this.giveVector();  //give random positive vector to flip the other direction
+            this.giveVector();
+        }
 
         ctx.drawImage(
             this.img,
