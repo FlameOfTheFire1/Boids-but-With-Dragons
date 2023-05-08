@@ -26,14 +26,31 @@ class sprite{
         this.ctx = context;
         this.giveVector();
         this.heading = 0; //heading starts at 0 degrees
-        this.referenceV = [0,0];
+        this.referenceV = [0,1];
     }
 
-    updateAngle(){
-        this.heading = Math.acos((0*this.v[0] + 0*this.v[1])/Math.sqrt((0+(this.v[0]*this.v[0] * 0+(this.v[1]*this.v[1])))));
-        console.log("rotate " + this.heading + " radians ");
-        //this.heading = (this.heading * 180.0) / Math.PI;
-        //console.log("rotate " + this.heading + " degrees ");
+    updateAngle(){ /*face palm-  remember canvas is not setup like standard x, y graph, there are no quadrants though you can have negative vectors . . . */
+        //could try to determine what "quadrant" the vector would be in and then use this to determine whether to rotate clockwise or counterclockwise
+
+        if(this.v[1] >= 0) //current vector is located in I or II quadrant (y is positive)
+        {
+            console.log("currently in quadrant I or II");
+            this.referenceV = [this.v[0], 1]; //put the reference vector tail to tail with velocity vector
+            this.heading = Math.acos((this.referenceV[0]*this.v[0] + 1*this.v[1])/(Math.sqrt((this.referenceV[0] * this.referenceV[0])+ 1) * Math.sqrt((this.v[0]*this.v[0])+(this.v[1]*this.v[1]))));
+            console.log("rotate " + this.heading + " radians ");
+            this.heading = (this.heading * 180.0) / Math.PI;
+            console.log("rotate " + this.heading + " degrees ");
+        }
+        else //current vector is located in III or IV quadrant (y is negative)
+        {
+            console.log("currently in quadrant III or IV");
+            this.referenceV = [this.v[0], -1];
+            this.heading = Math.acos((this.referenceV[0]*this.v[0] + (-1)*this.v[1])/(Math.sqrt((this.referenceV[0] * this.referenceV[0])+ 1) * Math.sqrt((this.v[0]*this.v[0])+(this.v[1]*this.v[1]))));
+            console.log("rotate " + this.heading + " radians ");
+            this.heading = (this.heading * 180.0) / Math.PI;
+            console.log("rotate " + this.heading + " degrees ");
+        }
+
     }
     
 
