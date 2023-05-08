@@ -27,6 +27,7 @@ class sprite{
         this.giveVector();
         this.heading = 0; //heading starts at 0 degrees
         this.referenceV = [0,1];
+        this.bk_img = null;
     }
 
     updateAngle(){ /*face palm-  remember canvas is not setup like standard x, y graph, there are no quadrants though you can have negative vectors . . . */
@@ -94,6 +95,11 @@ class sprite{
             this.frame_counter = this.sheetBounds[0];
         }
 
+        this.ctx.translate(this.x_y[0], this.x_y[1]); //change the origin to the center of where the previous image was on the canvas
+        this.ctx.rotate(this.heading); //rotate the canvas by the previous heading
+        this.bk_img = this.ctx.getImageData(this.x_y[0], this.x_y[1], parseInt(screen.width/4), parseInt(screen.height/4));
+        this.ctx.putImageData(this.bk_img, this.x_y[0], this.x_y[1]);
+
         this.updatePosition();
 
         if(this.x_y[0] > window.innerWidth || this.x_y[1] > window.innerHeight)
@@ -106,6 +112,7 @@ class sprite{
             this.giveVector();
         }
 
+        
         //this.updateAngle();
         //this.img.style.transform = 'rotate(' + this.heading + ')';
 
@@ -113,8 +120,10 @@ class sprite{
         //this.ctx.translate(this.x_y[0], this.x_y[1]);
         //this.ctx.rotate(this.heading);
         //this.ctx.translate(-1*parseInt(this.img.height), -1*parseInt(((this.img.width * this.frame_counter)/24)/2));
-        this.ctx.translate(this.x_y[0], this.x_y[1]);
-        this.ctx.rotate(this.heading);
+        
+        this.ctx.translate(this.x_y[0], this.x_y[1]); //change the origin to the center of where the image will be placed on the canvas
+        this.ctx.rotate(this.heading); //rotate the canvas by the heading
+        //this.bk_img = this.ctx.getImageData(this.x_y[0], this.x_y[1], parseInt(screen.width/4), parseInt(screen.height/4));
         ctx.drawImage(
             this.img,
             parseInt((this.img.width * this.frame_counter)/24),
@@ -126,10 +135,18 @@ class sprite{
             parseInt(screen.width/4),
             parseInt(screen.height/4)
             );
-            this.ctx.rotate(-1*this.heading);
-            this.ctx.translate(-1*this.x_y[0], -1*this.x_y[1]);
+        this.ctx.rotate(-1*this.heading);
+        this.ctx.translate(-1*this.x_y[0], -1*this.x_y[1]);
         //this.ctx.restore();
     }
+
+    
+    drawBack(){
+        this.bk_img.onload = function() {
+        //this.ctx.putImageData(this.bk_img, this.x_y[0], this.x_y[1]);
+        }
+    }
+    
 }
 
 var context = screen.getContext("2d");
@@ -155,14 +172,15 @@ function call_me_on_draw() {
 
     //var context = screen.getContext("2d");
 
-    if (bk_img != null) {
+    //if (bk_img != null) {
 
-        context.putImageData(bk_img, s.x_y[0], s.x_y[1]);
+        //context.putImageData(bk_img, s.x_y[0], s.x_y[1]);
+        //s.drawBack();
 
-    }
+    //}
 
     
-    bk_img = context.getImageData(s.x_y[0], s.x_y[1], parseInt(screen.width/4), parseInt(screen.height/4));
+    //bk_img = context.getImageData(s.x_y[0], s.x_y[1], parseInt(screen.width/4), parseInt(screen.height/4));
 
     s.draw(context);
 
