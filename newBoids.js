@@ -27,12 +27,52 @@ class sprite{
         this.giveVector();
         //this.heading = 0; //heading starts at 0 degrees
         this.referenceV = [0,1];
-        this.bk_img = null;
+        this.bk_img = new Image();
+        this.refN = [0,1];
+        this.refS = [0,-1];
+        this.refE = [1, 0];
+        this.refW = [-1, 0];
+        this.bk_img.src = "https://storage.googleapis.com/pai-images/c155138152e9452aac7afaffad655039.jpeg";
     }
 
-    updateAngle(){ /*face palm-  remember canvas is not setup like standard x, y graph, there are no quadrants though you can have negative vectors . . . */
-        //could try to determine what "quadrant" the vector would be in and then use this to determine whether to rotate clockwise or counterclockwise
+    updateAngle(){ 
 
+        if(this.v[1] >= 0){
+            //all vectors headed in an  upwards direction
+            console.log("vector is " + this.v[0] + "," + this.v[1]);
+            this.heading = Math.atan(this.v[1]/this.v[0]);
+            console.log("calculated angle is in QI or QII and is " + this.heading + " radians");
+            if(this.v[0] >= 0){ //angle in QI
+                //do nothing, rotate clockwise
+                this.heading = this.heading + Math.PI/2;
+                console.log("QI");
+            }
+            else{ //angle in QII
+                //rotate counter clockwise
+                //this.heading = -this.heading;
+                console.log("QII");
+            }
+
+            console.log("FINAL calculated angle is in QI or QII and is " + this.heading + " radians");
+        }
+        else //vector points downwards in QIII or QIV
+        {
+            this.heading = Math.atan(this.v[1]/this.v[0]);
+            console.log("calculate angle is in QIII or QIV and is " + (this.heading * (Math.PI/180)) + " degrees.");
+            if(this.v[0] >= 0) //QIII
+            {
+                this.heading = this.heading + Math.PI; //rotate 90 degrees clockwise plus calculated angle
+                console.log("QIII");
+            }
+
+            if(this.v[0] < 0)
+            {
+                this.heading = this.heading + 1.5 * Math.PI;
+                console.log("QIV");
+            }
+        }
+
+        /*
         if(this.v[1] >= 0) //current vector is located in I or II quadrant (y is positive)
         {
             console.log("currently in quadrant I or II");
@@ -41,6 +81,13 @@ class sprite{
             console.log("rotate " + this.heading + " radians ");
             this.heading = (this.heading * 180.0) / Math.PI;
             console.log("rotate " + this.heading + " degrees ");
+
+            if(){ //clockwise rotation needed
+
+            }
+            else{ //counter clockwise rotation needed
+
+            }
         }
         else //current vector is located in III or IV quadrant (y is negative)
         {
@@ -50,7 +97,7 @@ class sprite{
             console.log("rotate " + this.heading + " radians ");
             this.heading = (this.heading * 180.0) / Math.PI;
             console.log("rotate " + this.heading + " degrees ");
-        }
+        }*/
 
     }
     
@@ -67,14 +114,18 @@ class sprite{
     }
 
     giveVector(){
-        this.v = [Math.floor(Math.random() * 100), Math.floor(Math.random() * 100)];
+        this.v = [Math.floor(Math.random() * 10) + 1, Math.floor(Math.random() * 10) + 1];
         this.updateAngle();
         //this.v[1] = Math.floor(Math.random() * 100);
     }
 
+    giveEndPt(){
+        this.v0 = [x_y[0] + v[0], x_y[1] + v[1]];
+    }
+
     collideWithWall(){
-        this.v[0] = -1 * Math.floor(Math.random() * 100);
-        this.v[1] = -1*Math.floor(Math.random() * 100);
+        this.v[0] = -1 * (Math.floor(Math.random() * 10) + 1);
+        this.v[1] = -1* (Math.floor(Math.random() * 10) + 1);
         this.updateAngle();
         //this.v[0] = -1 * Math.sign(this.v[0])*Math.floor(Math.random() * 100);
         //this.v[1] = -1* Math.sign(this.v[1])*Math.floor(Math.random() * 100);
@@ -84,7 +135,7 @@ class sprite{
         //console.log(v[0]);
     }
 
-    draw(ctx){
+    draw(){
 
         if(this.frame_counter < this.sheetBounds[1])
         {
@@ -95,30 +146,7 @@ class sprite{
             this.frame_counter = this.sheetBounds[0];
         }
 
-        //this.ctx.translate(this.x_y[0], this.x_y[1]); //change the origin to the center of where the previous image was on the canvas
-        //this.ctx.rotate(this.heading); //rotate the canvas by the previous heading
-        //this.bk_img = this.ctx.getImageData(this.x_y[0], this.x_y[1], parseInt(screen.width/4), parseInt(screen.height/4));
-        //this.ctx.putImageData(this.bk_img, this.x_y[0], this.x_y[1]);
-        //this.ctx.translate(-1*this.x_y[0], -1*this.x_y[1]); //change the origin to the center of where the previous image was on the canvas
-        //this.ctx.rotate(-1*this.heading);
-
-        //this.updatePosition();
-
-        /*
-        //console.log(this.x_y[0]);
-        //console.log(this.x_y[1]);//always 100
-        this.ctx.translate(this.x_y[0], this.x_y[1]); //change the origin to the center of where the previous image was on the canvas
-        this.ctx.rotate(this.heading); //rotate the canvas by the previous heading
-        if (this.bk_img != null) {
-
-            //this.ctx.putImageData(this.bk_img, -48, -48);
-            //this.bk_img = this.ctx.getImageData(-48, -48, parseInt(screen.width/4), parseInt(screen.height/4));
-
-        }
-        //this.bk_img = this.ctx.getImageData(-48, -48, parseInt(screen.width/4), parseInt(screen.height/4));
-        ctx.setTransform(1, 0, 0, 1, 0, 0);
-        //this.ctx.translate(-1*this.x_y[0], -1*this.x_y[1]); //change the origin to the center of where the previous image was on the canvas
-        //this.ctx.rotate(-1*this.heading);*/
+        this.updatePosition();
 
         if(this.x_y[0] > window.innerWidth || this.x_y[1] > window.innerHeight)
         {
@@ -126,29 +154,17 @@ class sprite{
         }
         if(this.x_y[0] < 0 || this.x_y[1] < 0)
         {
-            //this.giveVector();  //give random positive vector to flip the other direction
             this.giveVector();
         }
 
         this.ctx.clearRect(0,0,screen.width, screen.height);
-        this.heading = this.heading + 0.01;     
-        //this.updateAngle();
-        //this.img.style.transform = 'rotate(' + this.heading + ')';
-
-        //this.ctx.save();
-        //this.ctx.translate(this.x_y[0], this.x_y[1]);
-        //this.ctx.rotate(this.heading);
-        //this.ctx.translate(-1*parseInt(this.img.height), -1*parseInt(((this.img.width * this.frame_counter)/24)/2));
+        this.ctx.drawImage(this.bk_img, 0, 0, screen.width, screen.height);
+        //this.heading = this.heading + 0.01;     
         
         this.ctx.translate(this.x_y[0], this.x_y[1]); //change the origin to the center of where the image will be placed on the canvas
-        //var tr = 200 + 48;
-        //this.ctx.translate(tr, tr);
         console.log("rotating by " + this.heading);
         this.ctx.rotate(this.heading); //rotate the canvas by the heading
-        //this.ctx.rotate(-1*this.heading);
-        //this.ctx.translate(-tr, -tr);
-        //this.bk_img = this.ctx.getImageData(this.x_y[0], this.x_y[1], parseInt(screen.width/4), parseInt(screen.height/4));
-        ctx.drawImage(
+        this.ctx.drawImage(
             this.img,
             parseInt((this.img.width * this.frame_counter)/24),
             0,
@@ -156,36 +172,30 @@ class sprite{
             this.img.height,
             -48,
             -48,
-            //this.x_y[0] - 48,
-            //this.x_y[1] - 48,
-            parseInt(screen.width/4),
-            parseInt(screen.height/4)
+            parseInt(screen.width/6),
+            parseInt(screen.height/6)
             );
-        //this.bk_img = this.ctx.getImageData(-48, -48, parseInt(screen.width/4), parseInt(screen.height/4));
-        //this.ctx.putImageData(this.bk_img, -48,-48);
-        ctx.setTransform(1, 0, 0, 1, 0, 0);
-        //this.ctx.rotate(-1*this.heading);
-        //this.ctx.translate(-tr, -tr);
-        //this.ctx.translate(-1*this.x_y[0], -1*this.x_y[1]);
-        //this.ctx.restore();
-    }
 
-    
-    drawBack(){
-        this.bk_img.onload = function() {
-        //this.ctx.putImageData(this.bk_img, this.x_y[0], this.x_y[1]);
-        }
+        this.ctx.setTransform(1, 0, 0, 1, 0, 0);
+
     }
     
 }
 
 var context = screen.getContext("2d");
+var spr = [];
+//for(var i = 0; i < 4; i++)
+//{
+ //   spr[i] = new sprite('dragon_FLY_NO_SHADOW_green.png', 6,11,96,96,96,2304, context);
+//}
 var s = new sprite('dragon_FLY_NO_SHADOW_green.png', 6,11,96,96,96,2304, context);
+s.giveVector();
+var p = new sprite('dragon_FLY_NO_SHADOW_green.png', 11,17,96,96,96,2304, context);
 var last_animation_time = new Date().getTime();
-var time_delta = 15;
+var time_delta = 100;
 var bk_img = null;
 
-s.img.onload = function() {
+p.img.onload = function() {
 
 function call_me_on_draw() {
     window.requestAnimationFrame(call_me_on_draw);
@@ -200,19 +210,18 @@ function call_me_on_draw() {
 
     last_animation_time = new Date().getTime();
 
-    //var context = screen.getContext("2d");
-
-    //if (bk_img != null) {
-
-     //   context.putImageData(bk_img, s.x_y[0], s.x_y[1]);
-     //   s.drawBack();
-
-    //}
-
+    //context.clearRect(0,0,screen.width, screen.height);
     
-    //bk_img = context.getImageData(s.x_y[0], s.x_y[1], parseInt(screen.width/4), parseInt(screen.height/4));
-
-    s.draw(context);
+    //for(var i = 0; i < 4; i++)
+    //{
+      //  spr[i].draw(context);
+       // console.log("drawing sprite " + (i+1));
+    //}
+    s.draw();
+    console.log("sprite s has velocity " +  s.v[0] + "," + s.v[1]);
+    //p.giveVector();
+    p.draw();
+    console.log("sprite p has velocity " +  p.v[0] + "," + p.v[1]);
 
 }
 call_me_on_draw();
