@@ -1,10 +1,19 @@
 let screen = document.getElementById("screen");
-
+var context = screen.getContext("2d");
+var bk_img = new Image();
+bk_img.src = "https://storage.googleapis.com/pai-images/c155138152e9452aac7afaffad655039.jpeg";
+bk_img.onload = function(){
+    context.drawImage(bk_img, 0, 0, screen.width, screen.height);
+}
+//let s2 = document.getElementById("balogna");
 
 window.addEventListener("resize", resizeCanvas, false)
         function resizeCanvas() {
             screen.width = window.innerWidth;
             screen.height = window.innerHeight;
+            context.drawImage(bk_img, 0, 0, screen.width, screen.height);
+            //s2.width = window.innerWidth;
+            //s2.height = window.innerHeight;
         }
         resizeCanvas();
 
@@ -13,6 +22,7 @@ window.addEventListener("resize", resizeCanvas, false)
 class sprite{
 
     constructor(spriteSheet, amin, amax, s_height, s_width, ss_height, ss_width, context){
+        this.offscreen = new OffscreenCanvas(window.innerWidth, window.innerHeight);
         this.url = spriteSheet;
         this.x_y = [100,100];
         this.sh_w = [s_height,s_width];
@@ -23,16 +33,16 @@ class sprite{
         this.img.src = spriteSheet;
         this.animation = [];
         this.velocity = [1,1];
-        this.ctx = context;
+        this.ctx = this.offscreen.getContext("2d");
         this.giveVector();
         //this.heading = 0; //heading starts at 0 degrees
         this.referenceV = [0,1];
-        this.bk_img = new Image();
+        //this.bk_img = new Image();
         this.refN = [0,1];
         this.refS = [0,-1];
         this.refE = [1, 0];
         this.refW = [-1, 0];
-        this.bk_img.src = "https://storage.googleapis.com/pai-images/c155138152e9452aac7afaffad655039.jpeg";
+        //this.bk_img.src = "https://storage.googleapis.com/pai-images/c155138152e9452aac7afaffad655039.jpeg";
     }
 
     updateAngle(){ 
@@ -101,6 +111,9 @@ class sprite{
 
     }
     
+    stop(){
+        this.v = [0,0];
+    }
 
     //add vector b's xy velocities to vector a's
     addVector(va, vb){
@@ -157,8 +170,11 @@ class sprite{
             this.giveVector();
         }
 
+        this.ctx.width = window.innerWidth;
+        this.ctx.height = window.innerHeight;
+
         this.ctx.clearRect(0,0,screen.width, screen.height);
-        this.ctx.drawImage(this.bk_img, 0, 0, screen.width, screen.height);
+        //this.ctx.drawImage(this.bk_img, 0, 0, screen.width, screen.height);
         //this.heading = this.heading + 0.01;     
         
         this.ctx.translate(this.x_y[0], this.x_y[1]); //change the origin to the center of where the image will be placed on the canvas
@@ -172,8 +188,8 @@ class sprite{
             this.img.height,
             -48,
             -48,
-            parseInt(screen.width/6),
-            parseInt(screen.height/6)
+            parseInt(screen.width/8),
+            parseInt(screen.height/8)
             );
 
         this.ctx.setTransform(1, 0, 0, 1, 0, 0);
@@ -182,19 +198,27 @@ class sprite{
     
 }
 
-var context = screen.getContext("2d");
-var spr = [];
-//for(var i = 0; i < 4; i++)
-//{
- //   spr[i] = new sprite('dragon_FLY_NO_SHADOW_green.png', 6,11,96,96,96,2304, context);
-//}
-var s = new sprite('dragon_FLY_NO_SHADOW_green.png', 6,11,96,96,96,2304, context);
-s.giveVector();
-var p = new sprite('dragon_FLY_NO_SHADOW_green.png', 11,17,96,96,96,2304, context);
-var last_animation_time = new Date().getTime();
-var time_delta = 100;
-var bk_img = null;
 
+
+
+
+var spr = [];
+for(var i = 0; i < 30; i++)
+{
+   spr[i] = new sprite('dragon_FLY_NO_SHADOW_green.png', 6,11,96,96,96,2304, context);
+}
+var s = new sprite('dragon_FLY_NO_SHADOW_green.png', 6,11,96,96,96,2304, context);
+//s.x_y = [400,400];
+
+//s.giveVector();
+var p = new sprite('dragon_FLY_NO_SHADOW_green.png', 6,11,96,96,96,2304, context);
+//p.velocity = [0,0];
+//p.x_y = [400,400];
+//p.stop();
+var last_animation_time = new Date().getTime();
+var time_delta = 90;
+//var bk_img = null;
+//js .then create func as async func
 p.img.onload = function() {
 
 function call_me_on_draw() {
@@ -210,18 +234,21 @@ function call_me_on_draw() {
 
     last_animation_time = new Date().getTime();
 
-    //context.clearRect(0,0,screen.width, screen.height);
+    context.clearRect(0,0,screen.width, screen.height);
+    context.drawImage(bk_img, 0, 0, screen.width, screen.height);
+
+    for(var j = 0; j < 30; j++){
+        spr[j].draw();
+        context.drawImage(spr[j].offscreen, 0, 0);
+    }
     
-    //for(var i = 0; i < 4; i++)
-    //{
-      //  spr[i].draw(context);
-       // console.log("drawing sprite " + (i+1));
-    //}
     s.draw();
-    console.log("sprite s has velocity " +  s.v[0] + "," + s.v[1]);
+    context.drawImage(s.offscreen, 0, 0);
+    console.log("sprite s has velocity " +  s.v[0] + "," + s.v[1] + " and is at " + s.x_y[0] + "," + s.x_y[1]);
     //p.giveVector();
     p.draw();
-    console.log("sprite p has velocity " +  p.v[0] + "," + p.v[1]);
+    context.drawImage(p.offscreen, 0, 0);
+    console.log("sprite p has velocity " +  p.v[0] + "," + p.v[1] + " and is at " + p.x_y[0] + "," + p.x_y[1]);
 
 }
 call_me_on_draw();
