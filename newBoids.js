@@ -97,10 +97,10 @@ class sprite{
     }
 
     updatePosition(){
-        this.v[0] = this.v[0] + this.coh_v[0];// + this.sep_v[0];// + this.al_v[0];
-        this.v[1] = this.v[1] + this.coh_v[1];// + this.sep_v[1];// + this.al_v[1];
-        //this.updateAngle();
-        this.speedLimit();
+        this.v[0] = this.v[0] + this.coh_v[0]; + this.sep_v[0] + this.al_v[0];
+        this.v[1] = this.v[1] + this.coh_v[1]; + this.sep_v[1] + this.al_v[1];
+        this.updateAngle();
+        //this.speedLimit();
         console.log("velocity in updatepos is " + this.v[0] + "," + this.v[1]);
         //this.v = this.v2;
 
@@ -197,14 +197,17 @@ class sprite{
         {
             if(j != i)
             {
+                //this.sep_v = [(this.sep_v[0] - (sprs[j].x_y[0] - this.x_y[0])), (this.sep_v[1] - (sprs[j].x_y[1] - this.x_y[1]))];
                 if(Math.abs(sprs[j].x_y[0] - this.x_y[0]) < 200 || Math.abs(sprs[j].x_y[1] - this.x_y[1]) < 200) //if any sprites are too close
                 {
-                    console.log((sprs[j].x_y[0] - this.x_y[0]) + "+" + (sprs[j].x_y[1] - this.x_y[1]));
+                    //console.log((sprs[j].x_y[0] - this.x_y[0]) + "+" + (sprs[j].x_y[1] - this.x_y[1]));
                     this.sep_v = [(this.sep_v[0] - (sprs[j].x_y[0] - this.x_y[0])), (this.sep_v[1] - (sprs[j].x_y[1] - this.x_y[1]))]; //get vector offset
                     //console.log("sep_v " + this.sep_v[0] + "," + this.sep_v[1]);
                 }
             }
         }
+        this.sep_v = [this.sep_v[0]*0.4, this.sep_v[1]*0.4];
+        console.log("sep_v " + this.sep_v[0] + "," + this.sep_v[1]);
     }
 
     alignment(i, sprs, num){
