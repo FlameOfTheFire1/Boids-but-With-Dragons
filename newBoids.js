@@ -1,3 +1,12 @@
+//constants
+var ROTATION = true; //turns off/on rotation
+var COHESION = 1000; //effects how aggressively the sprites try to stay with each other
+var SEPARATION = 0.6; //effects how aggressively sprites separate from each other
+var ALIGNMENT = 8; //effects how aggressively the sprites will align their velocities
+var num_spr = 10; //effects number of sprites
+var SPEED = 10; //effects random speed at which the sprites start and bounce from walls
+var time_delta = 90; //effects the speed at which the sprite animation occurs
+
 //get canvas, context, and draw background image
 let screen = document.getElementById("screen");
 var context = screen.getContext("2d");
@@ -34,16 +43,13 @@ class sprite{
         this.velocity = [1,1];
         this.ctx = this.offscreen.getContext("2d");
         this.giveVector();
-        //this.heading = 0; //heading starts at 0 degrees
         this.referenceV = [0,1];
-        //this.bk_img = new Image();
         this.refN = [0,1];
         this.refS = [0,-1];
         this.refE = [1, 0];
         this.refW = [-1, 0];
         this.sp_lim = [10,10];
         this.al_v = [0,0];
-        //this.bk_img.src = "https://storage.googleapis.com/pai-images/c155138152e9452aac7afaffad655039.jpeg";
     }
 
     updateAngle(){ 
@@ -99,25 +105,25 @@ class sprite{
     updatePosition(){
         this.v[0] = this.v[0] + this.coh_v[0]; + this.sep_v[0] + this.al_v[0];
         this.v[1] = this.v[1] + this.coh_v[1]; + this.sep_v[1] + this.al_v[1];
-        this.updateAngle();
-        //this.speedLimit();
+
+        if(ROTATION)
+        {
+            this.updateAngle();
+        }
         console.log("velocity in updatepos is " + this.v[0] + "," + this.v[1]);
-        //this.v = this.v2;
 
         this.x_y[0] = this.x_y[0] + this.v[0];
         this.x_y[1] = this.x_y[1] + this.v[1];
     }
 
     giveVector(){
-        this.v = [Math.floor(Math.random() * 5) + 1, Math.floor(Math.random() * 5) + 1];
-        this.v2 = this.v;
+        this.v = [Math.floor(Math.random() * SPEED) + 1, Math.floor(Math.random() * SPEED) + 1];
         this.updateAngle();
     }
 
     collideWithWall(){
-        this.v[0] = -1 * (Math.floor(Math.random() * 5) + 1);
-        this.v[1] = -1* (Math.floor(Math.random() * 5) + 1);
-        this.v2 = this.v;
+        this.v[0] = -1 * (Math.floor(Math.random() * SPEED) + 1);
+        this.v[1] = -1* (Math.floor(Math.random() * SPEED) + 1);
         this.updateAngle();
     }
 
@@ -186,7 +192,7 @@ class sprite{
         
         this.rel_center = [sum[0]/(num - 1), sum[1]/(num - 1)]; //average position
 
-        this.coh_v = [(this.rel_center[0] - this.x_y[0])/1000, (this.rel_center[1] - this.x_y[1])/1000];//offset vector for cohesion
+        this.coh_v = [(this.rel_center[0] - this.x_y[0])/COHESION, (this.rel_center[1] - this.x_y[1])/COHESION];//offset vector for cohesion
     }
 
     separation(i, sprs, num) //calculate separation vector offset for sprite
@@ -206,7 +212,7 @@ class sprite{
                 }
             }
         }
-        this.sep_v = [this.sep_v[0]*0.6, this.sep_v[1]*0.6];
+        this.sep_v = [this.sep_v[0]*SEPARATION, this.sep_v[1]*SEPARATION];
         console.log("sep_v " + this.sep_v[0] + "," + this.sep_v[1]);
     }
 
@@ -221,31 +227,19 @@ class sprite{
             }
         }
         this.al_v = [this.al_v[0]/(num - 1), this.al_v[1]/(num - 1)];
-        this.al_v = [(this.al_v[0] - this.v[0]/8), (this.al_v[0] - this.v[1]/8)];
+        this.al_v = [(this.al_v[0] - this.v[0]/ALIGNMENT), (this.al_v[0] - this.v[1]/ALIGNMENT)];
     }
 }
 
 
 
 
-const num_spr = 10;
 var spr = [];
 for(var i = 0; i < num_spr; i++)
 {
    spr[i] = new sprite('dragon_FLY_NO_SHADOW_green.png', 6,11,96,96,96,2304, context);
 }
-//var s = new sprite('dragon_FLY_NO_SHADOW_green.png', 6,11,96,96,96,2304, context);
-//s.x_y = [400,400];
-
-//s.giveVector();
-//var p = new sprite('dragon_FLY_NO_SHADOW_green.png', 6,11,96,96,96,2304, context);
-//p.velocity = [0,0];
-//p.x_y = [400,400];
-//p.stop();
 var last_animation_time = new Date().getTime();
-var time_delta = 90;
-//var bk_img = null;
-//js .then create func as async func
 spr[num_spr-1].img.onload = function() {
 
 function call_me_on_draw() {
@@ -266,11 +260,6 @@ function call_me_on_draw() {
 
     for(var j = 0; j < num_spr; j++){
 
-        if(j == 0){
-            console.log("sprite 0's position is " + spr[j].x_y[0] +  "," + spr[j].x_y[1]);
-            //console.log("sprite 0's velocity is " + spr[j].v[0] +  "," + spr[j].v[1]);
-        }
-
         spr[j].cohesion(j, spr, num_spr);
         spr[j].separation(j, spr, num_spr);
         spr[j].alignment(j, spr, num_spr);
@@ -278,13 +267,6 @@ function call_me_on_draw() {
         context.drawImage(spr[j].offscreen, 0, 0);
     }
     
-    //s.draw();
-    //context.drawImage(s.offscreen, 0, 0);
-    //console.log("sprite s has velocity " +  s.v[0] + "," + s.v[1] + " and is at " + s.x_y[0] + "," + s.x_y[1]);
-    //p.giveVector();
-    //p.draw();
-    //context.drawImage(p.offscreen, 0, 0);
-    //console.log("sprite p has velocity " +  p.v[0] + "," + p.v[1] + " and is at " + p.x_y[0] + "," + p.x_y[1]);
 
 }
 call_me_on_draw();
