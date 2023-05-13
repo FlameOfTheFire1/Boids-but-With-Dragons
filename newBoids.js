@@ -206,7 +206,7 @@ class sprite{
                 }
             }
         }
-        this.sep_v = [this.sep_v[0]*0.4, this.sep_v[1]*0.4];
+        this.sep_v = [this.sep_v[0]*0.6, this.sep_v[1]*0.6];
         console.log("sep_v " + this.sep_v[0] + "," + this.sep_v[1]);
     }
 
