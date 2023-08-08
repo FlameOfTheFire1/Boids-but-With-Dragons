@@ -3,9 +3,9 @@ var ROTATION = true; //turns off/on rotation
 var COHESION = 1000; //effects how aggressively the sprites try to stay with each other
 var SEPARATION = 0.6; //effects how aggressively sprites separate from each other
 var ALIGNMENT = 8; //effects how aggressively the sprites will align their velocities
-var num_spr = 10; //effects number of sprites
-var SPEED = 10; //effects random speed at which the sprites start and bounce from walls
-var time_delta = 90; //effects the speed at which the sprite animation occurs
+var num_spr = 2; //effects number of sprites
+var SPEED = 2; //effects random speed at which the sprites start and bounce from walls
+var time_delta = 400; //effects the speed at which the sprite animation occurs
 
 //get canvas, context, and draw background image
 let screen = document.getElementById("screen");
@@ -50,6 +50,7 @@ class sprite{
         this.refW = [-1, 0];
         this.sp_lim = [10,10];
         this.al_v = [0,0];
+        this.v0 = [0,0];
     }
 
     updateAngle(){ 
@@ -95,6 +96,33 @@ class sprite{
         this.v = [0,0];
     }
 
+    //keeps the angle from changing too rapidly by limiting the change in direction of the vectors.
+    angleLimit(){
+        //if the sign of the vector flips, then it is an unnatural turn
+        //cap the angle chang at no more than 30 degrees from the prior vector
+        //to cap the angle change, limit the change in vector
+
+        if(Math.sign(this.v0[0]) != Math.sign(this.v[0]) && Math.sign(this.v0[1]) != Math.sign(this.v[1])) //x and y sign change
+        {
+                this.v[0] = this.v1[0] + (Math.sign(this.v[0]) * this.v[0]) * 0.99;
+                this.v[1] = this.v1[1] + (Math.sign(this.v[1]) * this.v[1]) * 0.99;
+        }
+
+        /*
+        if(Math.sign(this.v0[0]) == Math.sign(this.v1[0])) //x sign change, instead of completely flipping around, decrease rapidly, hit zero and then increment
+        {
+            this.v[0] = this.v1[0] - Math.sign(this.v;
+        }
+        if(Math.sign(this.v0[1]) == Math.sign(this.v1[1])) //y sign change
+        {
+
+        }
+        //if(change too great){
+
+        
+        //}*/
+    }
+
     speedLimit(){
         if(this.v[0] > this.sp_lim[0], this.v[1] > this.sp_lim[1])
         {
@@ -103,8 +131,15 @@ class sprite{
     }
 
     updatePosition(){
+
+        //save prior vector
+        console.log("velocity initial is " + this.v[0] +  "," + this.v[1]);
+        this.v0[0] = this.v[0];
+        this.v0[1] = this.v[1];
+
         this.v[0] = this.v[0] + this.coh_v[0]; + this.sep_v[0] + this.al_v[0];
         this.v[1] = this.v[1] + this.coh_v[1]; + this.sep_v[1] + this.al_v[1];
+        this.angleLimit();
 
         if(ROTATION)
         {
@@ -233,14 +268,18 @@ class sprite{
 
 
 
+//independent sprite demonstrates proper angle change independent of boid behavior
+var s = new sprite('dragon_FLY_NO_SHADOW_green.png', 6,11,96,96,96,2304, context);
+
 
 var spr = [];
 for(var i = 0; i < num_spr; i++)
 {
    spr[i] = new sprite('dragon_FLY_NO_SHADOW_green.png', 6,11,96,96,96,2304, context);
+   console.log("index " + i);
 }
 var last_animation_time = new Date().getTime();
-spr[num_spr-1].img.onload = function() {
+spr[num_spr - 1].img.onload = function() {
 
 function call_me_on_draw() {
     window.requestAnimationFrame(call_me_on_draw);
@@ -260,6 +299,7 @@ function call_me_on_draw() {
 
     for(var j = 0; j < num_spr; j++){
 
+        console.log("index2 " + j);
         spr[j].cohesion(j, spr, num_spr);
         spr[j].separation(j, spr, num_spr);
         spr[j].alignment(j, spr, num_spr);
