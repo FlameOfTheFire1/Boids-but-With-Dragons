@@ -53,6 +53,11 @@ class sprite{
         this.v0 = [0,0];
     }
 
+
+    changeColor(color){
+
+    }
+
     updateAngle(){ 
 
         if(this.v[1] >= 0){
@@ -269,7 +274,7 @@ class sprite{
 
 
 //independent sprite demonstrates proper angle change independent of boid behavior
-var s = new sprite('dragon_FLY_NO_SHADOW_green.png', 6,11,96,96,96,2304, context);
+var s = new sprite('dragon_FLY_NO_SHADOW_blue.png', 6,11,96,96,96,2304, context);
 
 
 var spr = [];
@@ -297,6 +302,8 @@ function call_me_on_draw() {
     context.clearRect(0,0,screen.width, screen.height);
     context.drawImage(bk_img, 0, 0, screen.width, screen.height);
 
+    //s.draw();
+    //context.drawImage(s.offscreen, 0, 0);
     for(var j = 0; j < num_spr; j++){
 
         console.log("index2 " + j);
