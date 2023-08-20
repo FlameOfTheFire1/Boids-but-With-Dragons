@@ -5,11 +5,13 @@ var SEPARATION = 0.6; //effects how aggressively sprites separate from each othe
 var ALIGNMENT = 8; //effects how aggressively the sprites will align their velocities
 var num_spr = 2; //effects number of sprites
 var SPEED = 2; //effects random speed at which the sprites start and bounce from walls
-var time_delta = 400; //effects the speed at which the sprite animation occurs
+var time_delta = 2500; //effects the speed at which the sprite animation occurs
 
 //get canvas, context, and draw background image
 let screen = document.getElementById("screen");
 var context = screen.getContext("2d");
+var play = true;
+
 var bk_img = new Image();
 bk_img.src = "https://storage.googleapis.com/pai-images/c155138152e9452aac7afaffad655039.jpeg";
 bk_img.onload = function(){
@@ -60,38 +62,52 @@ class sprite{
 
     updateAngle(){ 
 
-        if(this.v[1] >= 0){
-            //all vectors headed in an  upwards direction
-            //console.log("vector is " + this.v[0] + "," + this.v[1]);
+        if(this.v[1] >= 0){//vector is headed towards maximum hieght value of the screen.  
             this.heading = Math.atan(this.v[1]/this.v[0]);
-            //console.log("calculated angle is in QI or QII and is " + this.heading + " radians");
+            //this.heading = Math.abs(Math.atan(this.v[1]/this.v[0]));
+            console.log("Initial calculated angle is " + (this.heading * (180/Math.PI)).toFixed(0));
             if(this.v[0] >= 0){ //angle in QI
-                //do nothing, rotate clockwise
-                this.heading = this.heading + Math.PI/2;
-                //console.log("QI");
+
+                //this.heading = this.heading + Math.PI/2; //rotate angle + 45 degrees clockwise
+                //this.heading = (Math.PI/2 - Math.abs(this.heading));
+                this.heading = (Math.PI/2 + Math.abs(this.heading));
+                console.log("Angle is in QI " + (this.heading * (180/Math.PI)).toFixed(0));
             }//
-            else{ //angle in QII
-                //rotate counter clockwise
-                //this.heading = -this.heading;
-                //console.log("QII");
+            else //QIII
+            {
+                this.heading = (this.heading - Math.PI/2);
+                console.log("Angle is in QIII " + (this.heading * (180/Math.PI)).toFixed(0));
             }
+            
+            /*else{ //angle in QII
+                //rotate counter clockwise
+                this.heading = -(Math.PI/2 - Math.abs(this.heading));
+                console.log("Angle is in QII " + (this.heading * (180/Math.PI)).toFixed(0)); //calculated angle is from negative x axis, so we wan tthe other angle formed from the 
+                //pos y axis and the calculated angle.  the final angle should be negative or counterclockwise in direction from the pos y axis
+            }*/
 
             //console.log("FINAL calculated angle is in QI or QII and is " + this.heading + " radians");
         }
-        else //vector points downwards in QIII or QIV
+        else //vector headed away from the max hieght of the screen
         {
             this.heading = Math.atan(this.v[1]/this.v[0]);
             //console.log("calculate angle is in QIII or QIV and is " + (this.heading * (Math.PI/180)) + " degrees.");
+            /*
             if(this.v[0] >= 0) //QIII
             {
                 this.heading = this.heading + Math.PI; //rotate 90 degrees clockwise plus calculated angle
-                //console.log("QIII");
-            }
+                console.log("Angle is in QIII " + (this.heading * (180/Math.PI)).toFixed(0));
+            }*/
 
             if(this.v[0] < 0)
             {
-                this.heading = this.heading + 1.5 * Math.PI;
-                //console.log("QIV");
+                //this.heading = this.heading + 1.5 * Math.PI; //rotate 90 + 45 degrees clockwise plus calculated anlge
+                
+                console.log("Angle is in QIV " + (this.heading * (180/Math.PI)).toFixed(0));
+            }
+            else
+            {
+                console.log("Angle is in QIV ");
             }
         }
 
@@ -138,19 +154,29 @@ class sprite{
     updatePosition(){
 
         //save prior vector
-        console.log("velocity initial is " + this.v[0] +  "," + this.v[1]);
+        console.log("velocity initial is " + (this.v[0]).toFixed(1) +  "," + (this.v[1]).toFixed(1));
         this.v0[0] = this.v[0];
         this.v0[1] = this.v[1];
 
         this.v[0] = this.v[0] + this.coh_v[0]; + this.sep_v[0] + this.al_v[0];
         this.v[1] = this.v[1] + this.coh_v[1]; + this.sep_v[1] + this.al_v[1];
-        this.angleLimit();
+        
+        if(this.v[0] == 0.0) //keep vectors from hitting zero since the math cannot be computed
+        {
+            this.v[0] = 0.1
+        }
+        if(this.v[1] == 0.0)
+        {
+            this.v[1] = 0.1;
+        } 
+
+        //this.angleLimit();
 
         if(ROTATION)
         {
             this.updateAngle();
         }
-        console.log("velocity in updatepos is " + this.v[0] + "," + this.v[1]);
+        console.log("velocity in updatepos is " + (this.v[0]).toFixed(1) + "," + (this.v[1]).toFixed(1));
 
         this.x_y[0] = this.x_y[0] + this.v[0];
         this.x_y[1] = this.x_y[1] + this.v[1];
@@ -253,7 +279,7 @@ class sprite{
             }
         }
         this.sep_v = [this.sep_v[0]*SEPARATION, this.sep_v[1]*SEPARATION];
-        console.log("sep_v " + this.sep_v[0] + "," + this.sep_v[1]);
+        //console.log("sep_v " + this.sep_v[0] + "," + this.sep_v[1]);
     }
 
     alignment(i, sprs, num){
@@ -274,28 +300,46 @@ class sprite{
 
 
 //independent sprite demonstrates proper angle change independent of boid behavior
-var s = new sprite('dragon_FLY_NO_SHADOW_blue.png', 6,11,96,96,96,2304, context);
+//var s = new sprite('dragon_FLY_NO_SHADOW_blue.png', 6,11,96,96,96,2304, context);
 
 
 var spr = [];
 for(var i = 0; i < num_spr; i++)
 {
-   spr[i] = new sprite('dragon_FLY_NO_SHADOW_green.png', 6,11,96,96,96,2304, context);
+    if(i == 0)
+    {
+        spr[i] = new sprite('dragon_FLY_NO_SHADOW_blue.png', 6,11,96,96,96,2304, context); //blue is index 0
+    }
+    else
+    {
+        spr[i] = new sprite('dragon_FLY_NO_SHADOW_green.png', 6,11,96,96,96,2304, context); //green is index 1
+
+    }
    console.log("index " + i);
 }
+
+
+
+screen.addEventListener('click', function(e) {
+    //when the canvas is clicked, pause or resume animation
+    play = !play;
+});
+
 var last_animation_time = new Date().getTime();
 spr[num_spr - 1].img.onload = function() {
+
+
 
 function call_me_on_draw() {
     window.requestAnimationFrame(call_me_on_draw);
 
-    if ((time_delta + last_animation_time) > new Date().getTime()) {
+    if ((time_delta + last_animation_time) > new Date().getTime() || play == false) { //can add a pause condition here
 
         return;
 
     }
 
-    console.log("past time delta");
+    //console.log("past time delta");
 
     last_animation_time = new Date().getTime();
 
@@ -306,7 +350,15 @@ function call_me_on_draw() {
     //context.drawImage(s.offscreen, 0, 0);
     for(var j = 0; j < num_spr; j++){
 
-        console.log("index2 " + j);
+        //console.log("index2 " + j);
+        if(j == 0)
+        {
+            console.log("BLUE DRAGON");
+        }
+        else
+        {
+            console.log("GREEN DRAGON");
+        }
         spr[j].cohesion(j, spr, num_spr);
         spr[j].separation(j, spr, num_spr);
         spr[j].alignment(j, spr, num_spr);
@@ -314,7 +366,7 @@ function call_me_on_draw() {
         context.drawImage(spr[j].offscreen, 0, 0);
     }
     
-
+    
 }
 call_me_on_draw();
 
