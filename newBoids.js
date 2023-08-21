@@ -1,11 +1,11 @@
 //constants
 var ROTATION = true; //turns off/on rotation
-var COHESION = 1000; //effects how aggressively the sprites try to stay with each other
-var SEPARATION = 0.6; //effects how aggressively sprites separate from each other
+var COHESION = 10000; //effects how aggressively the sprites try to stay with each other
+var SEPARATION = 0.9; //effects how aggressively sprites separate from each other
 var ALIGNMENT = 8; //effects how aggressively the sprites will align their velocities
-var num_spr = 2; //effects number of sprites
-var SPEED = 2; //effects random speed at which the sprites start and bounce from walls
-var time_delta = 2500; //effects the speed at which the sprite animation occurs
+var num_spr = 8; //effects number of sprites
+var SPEED = 1; //effects random speed at which the sprites start and bounce from walls
+var time_delta = 130;//2500; //effects the speed at which the sprite animation occurs
 
 //get canvas, context, and draw background image
 let screen = document.getElementById("screen");
@@ -62,7 +62,7 @@ class sprite{
 
     updateAngle(){ 
 
-        if(this.v[1] >= 0){//vector is headed towards maximum hieght value of the screen.  
+        if(this.v[1] >= 0){//vector is headed towards maximum hieght value (y max) of the screen.  
             this.heading = Math.atan(this.v[1]/this.v[0]);
             //this.heading = Math.abs(Math.atan(this.v[1]/this.v[0]));
             console.log("Initial calculated angle is " + (this.heading * (180/Math.PI)).toFixed(0));
@@ -73,10 +73,10 @@ class sprite{
                 this.heading = (Math.PI/2 + Math.abs(this.heading));
                 console.log("Angle is in QI " + (this.heading * (180/Math.PI)).toFixed(0));
             }//
-            else //QIII
+            else //QII
             {
                 this.heading = (this.heading - Math.PI/2);
-                console.log("Angle is in QIII " + (this.heading * (180/Math.PI)).toFixed(0));
+                console.log("Angle is in QII " + (this.heading * (180/Math.PI)).toFixed(0));
             }
             
             /*else{ //angle in QII
@@ -103,11 +103,13 @@ class sprite{
             {
                 //this.heading = this.heading + 1.5 * Math.PI; //rotate 90 + 45 degrees clockwise plus calculated anlge
                 
-                console.log("Angle is in QIV " + (this.heading * (180/Math.PI)).toFixed(0));
+                this.heading = -(Math.PI/2 - this.heading);
+                console.log("Angle is in QIII " + (this.heading * (180/Math.PI)).toFixed(0));
             }
             else
             {
-                console.log("Angle is in QIV ");
+                this.heading = Math.PI/2 - Math.abs(this.heading);
+                console.log("Angle is in QIV " + (this.heading * (180/Math.PI)).toFixed(0));
             }
         }
 
@@ -120,13 +122,13 @@ class sprite{
     //keeps the angle from changing too rapidly by limiting the change in direction of the vectors.
     angleLimit(){
         //if the sign of the vector flips, then it is an unnatural turn
-        //cap the angle chang at no more than 30 degrees from the prior vector
+        //cap the angle change at no more than 30 degrees from the prior vector
         //to cap the angle change, limit the change in vector
 
         if(Math.sign(this.v0[0]) != Math.sign(this.v[0]) && Math.sign(this.v0[1]) != Math.sign(this.v[1])) //x and y sign change
         {
-                this.v[0] = this.v1[0] + (Math.sign(this.v[0]) * this.v[0]) * 0.99;
-                this.v[1] = this.v1[1] + (Math.sign(this.v[1]) * this.v[1]) * 0.99;
+                this.v[0] = this.v1[0] + (Math.sign(this.v[0]) * this.v[0]) * 0.5;
+                this.v[1] = this.v1[1] + (Math.sign(this.v[1]) * this.v[1]) * 0.5;
         }
 
         /*
@@ -206,6 +208,8 @@ class sprite{
 
         this.updatePosition();
 
+        /*
+        // previous wall collision detection
         if(this.x_y[0] > window.innerWidth || this.x_y[1] > window.innerHeight)
         {
             this.collideWithWall(); //give random negative vector to flip around
@@ -213,6 +217,24 @@ class sprite{
         if(this.x_y[0] < 0 || this.x_y[1] < 0)
         {
             this.giveVector();
+        }*/
+
+        //new wall collision just extends the screen
+        if(this.x_y[0] > window.innerWidth) //sprite position is past the screen's maximum x boundary
+        {
+            this.x_y[0] = 0; //x position reset to zero or the left side of the screen
+        }
+        if(this.x_y[1] > window.innerHeight) //sprite position is past the screen's maximum y boundary
+        {
+            this.x_y[1] = 0; //sprite reset to zero or above the screen
+        }
+        if(this.x_y[0] <  0) //sprite position is above the screen's 0 x boundary
+        {
+            this.x_y[0] = window.innerWidth;
+        }
+        if(this.x_y[1] < 0) //sprite position is past the screen's 0 y boundary
+        {
+            this.x_y[1] = window.innerHeight;
         }
 
         this.ctx.width = window.innerWidth;
@@ -233,8 +255,8 @@ class sprite{
             this.img.height,
             -48,
             -48,
-            parseInt(screen.width/8),
-            parseInt(screen.height/8)
+            parseInt(screen.width/9), //these two lines affect the size of the drawn sprite
+            parseInt(screen.height/9)
             );
 
         this.ctx.setTransform(1, 0, 0, 1, 0, 0);
@@ -306,13 +328,13 @@ class sprite{
 var spr = [];
 for(var i = 0; i < num_spr; i++)
 {
-    if(i == 0)
+    if(i % 2 == 0)
     {
-        spr[i] = new sprite('dragon_FLY_NO_SHADOW_blue.png', 6,11,96,96,96,2304, context); //blue is index 0
+        spr[i] = new sprite('dragon_FLY_NO_SHADOW_blue.png', 6,11,96,96,96,2304, context); //blue is even indices
     }
     else
     {
-        spr[i] = new sprite('dragon_FLY_NO_SHADOW_green.png', 6,11,96,96,96,2304, context); //green is index 1
+        spr[i] = new sprite('dragon_FLY_NO_SHADOW_green.png', 6,11,96,96,96,2304, context); //green is odd indices
 
     }
    console.log("index " + i);
