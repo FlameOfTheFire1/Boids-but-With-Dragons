@@ -3,12 +3,13 @@ var ROTATION = true; //turns off/on rotation
 var COHESION = 10000; //effects how aggressively the sprites try to stay with each other
 var SEPARATION = 0.9; //effects how aggressively sprites separate from each other
 var ALIGNMENT = 8; //effects how aggressively the sprites will align their velocities
-var num_spr = 8; //effects number of sprites
-var SPEED = 1; //effects random speed at which the sprites start and bounce from walls
+var num_spr = 15; //effects number of sprites
+var SPEED = 5; //effects random speed at which the sprites start and bounce from walls
 var time_delta = 130;//2500; //effects the speed at which the sprite animation occurs
 
 //get canvas, context, and draw background image
 let screen = document.getElementById("screen");
+let panel = document.getElementById("panel");
 var context = screen.getContext("2d");
 var play = true;
 
@@ -25,6 +26,8 @@ window.addEventListener("resize", resizeCanvas, false)
             screen.width = window.innerWidth;
             screen.height = window.innerHeight;
             context.drawImage(bk_img, 0, 0, screen.width, screen.height);
+            panel.width = window.innerWidth / 4;
+            panel.height = window.innerHeight;
         }
         resizeCanvas();
 
@@ -222,13 +225,13 @@ class sprite{
         //new wall collision just extends the screen
         if(this.x_y[0] > window.innerWidth) //sprite position is past the screen's maximum x boundary
         {
-            this.x_y[0] = 0; //x position reset to zero or the left side of the screen
+            this.x_y[0] = window.innerWidth / 7; //x position reset to zero or the left side of the screen
         }
         if(this.x_y[1] > window.innerHeight) //sprite position is past the screen's maximum y boundary
         {
             this.x_y[1] = 0; //sprite reset to zero or above the screen
         }
-        if(this.x_y[0] <  0) //sprite position is above the screen's 0 x boundary
+        if(this.x_y[0] < window.innerWidth / 7) //sprite position is below the screen's shared x boundary
         {
             this.x_y[0] = window.innerWidth;
         }

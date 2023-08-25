@@ -16,11 +16,215 @@
         #screen {
             display: block;
         }
+
+
+        #Cohesion {
+            position: absolute;
+            top: 73%;
+            left: 6%;
+            transform: translate(-50%, -50%);
+            z-index: 3;
+        }
+        #Separation {
+            position: absolute;
+            top: 59%;
+            left: 6%;
+            transform: translate(-50%, -50%);
+            z-index: 1;
+        }
+        #Alignment {
+            position: absolute;
+            top: 66%;
+            left: 6%;
+            transform: translate(-50%, -50%);
+            z-index: 1;
+        }
+
+        #Framerate {
+            position: absolute;
+            top: 80%;
+            left: 6%;
+            transform: translate(-50%, -50%);
+            z-index: 3;
+        }
+        #Sprites {
+            position: absolute;
+            top: 87%;
+            left: 6%;
+            transform: translate(-50%, -50%);
+            z-index: 3;
+        }
+
+        #Pause {
+            position: absolute;
+            top: 51%;
+            left: 3%;
+            width: 90px;
+            height: 35px;
+            transform: translate(-50%, -50%);
+            z-index: 3;
+        }
+
+        #Rotation {
+            position: absolute;
+            top: 51%;
+            left: 9%;
+            width: 90px;
+            transform: translate(-50%, -50%);
+            z-index: 3;
+        }
+
+        #panel{
+            background-color: grey;
+            position: absolute;
+            top: 50%;
+            left: 0%;
+            transform: translate(-50%, -50%);
+            z-index: 1;
+        }
+
+        #title{
+            position: absolute;
+            top: 0%;
+            left: 4%;
+            transform: translate(-50%, -50%);
+            z-index: 2;
+            text-shadow: 2px 2px red;
+            color: black;
+            font-size: 45px;
+        }
+
+        #descr{
+            position: absolute;
+            color: black;
+            text-shadow: 1px 2px black;
+            font-size: large;
+            text-decoration: black underline;
+            top: 42%;
+            left: 6%;
+            transform: translate(-50%, -50%);
+            z-index: 2;
+        }
+
+        img{
+            position: absolute;
+            top: 21%;
+            left: 6%;
+            transform: translate(-50%, -50%);
+            z-index: 2;
+        }
+        #but{
+            position: absolute;
+            top: 0%;
+            left: 8%;
+            transform: translate(-50%, -50%);
+            z-index: 2;
+            text-shadow: 2px 2px red;
+            color: black;
+            font-size: 30px;
+        }
+        #with{
+            position: absolute;
+            top: 2%;
+            left: 9%;
+            transform: translate(-50%, -50%);
+            z-index: 2;
+            text-shadow: 2px 2px red;
+            color: black;
+            font-size: 30px;
+        }
+        #Dragons{
+            position: absolute;
+            top: 29%;
+            left: 6%;
+            transform: translate(-50%, -50%);
+            z-index: 2;
+            font-family: 'Lucida Handwriting', fantasy;
+            text-shadow: 2px 2px red;
+            color: black;
+            font-size: 43px;
+        }
+
+        #s{
+            position: absolute;
+            color: black;
+            font-size: large;
+            top: 55%;
+            left: 6%;
+            transform: translate(-50%, -50%);
+            z-index: 2;
+        }
+        
+        #a{
+            position: absolute;
+            color: black;
+            font-size: large;
+            top: 62%;
+            left: 6%;
+            transform: translate(-50%, -50%);
+            z-index: 2;
+        }
+
+        #c{
+            position: absolute;
+            color: black;
+            font-size: large;
+            top: 69%;
+            left: 6%;
+            transform: translate(-50%, -50%);
+            z-index: 2;
+        }
+
+        #f{
+            position: absolute;
+            color: black;
+            font-size: large;
+            top: 76%;
+            left: 6%;
+            transform: translate(-50%, -50%);
+            z-index: 2;
+        }
+
+        #d{
+            position: absolute;
+            color: black;
+            font-size: large;
+            top: 83%;
+            left: 6%;
+            transform: translate(-50%, -50%);
+            z-index: 2;
+        }
+
     </style>
 </head>
 <body>
 
 <canvas id = "screen" width="96px" height="2112px"></canvas>
+
+<div id = "control panel">
+    <img src = "dragonboids.jpg">
+    <p id = "title">Boids</p>
+    <p id = "but">but</p>
+    <p id = "with">there's</p>
+    <p id = "Dragons">Dragons</p>
+    <canvas id = "panel"></canvas>
+    <p id = "descr">Control Panel</p>
+
+<div id = "sliders">
+    <button id="Rotation">Disable Rotation</button>
+    <p id = "c">Cohesion:</p>
+    <input type="range" min="0" max="10000" value="5000" id = "Cohesion">
+    <p id = "s">Separation:</p>
+    <input type="range" min="0" max="10" value="5" id = "Separation"> <!--change 0,2,6 . . . to  0.0,0.2,0.6,etc. -->
+    <p id =  "a">Alignment:</p>
+    <input type="range" min="0" max="10" value="5" id = "Alignment">
+    <p id =  "f">Framerate:</p>
+    <input type="range" min="0" max="10" value="5" id = "Framerate">
+    <p id =  "d">Dragons:</p>
+    <input type="range" min="2" max="20" value="2" id = "Sprites">
+    <button id="Pause">Pause</button>
+</div>
+</div>
 
 <script src="newBoids.js"></script>
 </body>
