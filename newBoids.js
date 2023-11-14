@@ -1,16 +1,19 @@
 //constants
-var ROTATION = true; //turns off/on rotation
+//var rotation = true; //turns off/on rotation
 var COHESION = 10000; //effects how aggressively the sprites try to stay with each other
 var SEPARATION = 0.9; //effects how aggressively sprites separate from each other
 var ALIGNMENT = 8; //effects how aggressively the sprites will align their velocities
-var num_spr = 15; //effects number of sprites
+var num_spr = 2; //effects number of sprites
 var SPEED = 5; //effects random speed at which the sprites start and bounce from walls
 var time_delta = 130;//2500; //effects the speed at which the sprite animation occurs
+
+var rotation = true;
 
 //get canvas, context, and draw background image
 let screen = document.getElementById("screen");
 let panel = document.getElementById("panel");
 var context = screen.getContext("2d");
+
 var play = true;
 
 var bk_img = new Image();
@@ -68,18 +71,18 @@ class sprite{
         if(this.v[1] >= 0){//vector is headed towards maximum hieght value (y max) of the screen.  
             this.heading = Math.atan(this.v[1]/this.v[0]);
             //this.heading = Math.abs(Math.atan(this.v[1]/this.v[0]));
-            console.log("Initial calculated angle is " + (this.heading * (180/Math.PI)).toFixed(0));
+            //console.log("Initial calculated angle is " + (this.heading * (180/Math.PI)).toFixed(0));
             if(this.v[0] >= 0){ //angle in QI
 
                 //this.heading = this.heading + Math.PI/2; //rotate angle + 45 degrees clockwise
                 //this.heading = (Math.PI/2 - Math.abs(this.heading));
                 this.heading = (Math.PI/2 + Math.abs(this.heading));
-                console.log("Angle is in QI " + (this.heading * (180/Math.PI)).toFixed(0));
+                //console.log("Angle is in QI " + (this.heading * (180/Math.PI)).toFixed(0));
             }//
             else //QII
             {
                 this.heading = (this.heading - Math.PI/2);
-                console.log("Angle is in QII " + (this.heading * (180/Math.PI)).toFixed(0));
+                //console.log("Angle is in QII " + (this.heading * (180/Math.PI)).toFixed(0));
             }
             
             /*else{ //angle in QII
@@ -107,12 +110,12 @@ class sprite{
                 //this.heading = this.heading + 1.5 * Math.PI; //rotate 90 + 45 degrees clockwise plus calculated anlge
                 
                 this.heading = -(Math.PI/2 - this.heading);
-                console.log("Angle is in QIII " + (this.heading * (180/Math.PI)).toFixed(0));
+                //console.log("Angle is in QIII " + (this.heading * (180/Math.PI)).toFixed(0));
             }
             else
             {
                 this.heading = Math.PI/2 - Math.abs(this.heading);
-                console.log("Angle is in QIV " + (this.heading * (180/Math.PI)).toFixed(0));
+                //console.log("Angle is in QIV " + (this.heading * (180/Math.PI)).toFixed(0));
             }
         }
 
@@ -159,7 +162,7 @@ class sprite{
     updatePosition(){
 
         //save prior vector
-        console.log("velocity initial is " + (this.v[0]).toFixed(1) +  "," + (this.v[1]).toFixed(1));
+        //console.log("velocity initial is " + (this.v[0]).toFixed(1) +  "," + (this.v[1]).toFixed(1));
         this.v0[0] = this.v[0];
         this.v0[1] = this.v[1];
 
@@ -177,11 +180,11 @@ class sprite{
 
         //this.angleLimit();
 
-        if(ROTATION)
+        if(rotation)
         {
             this.updateAngle();
         }
-        console.log("velocity in updatepos is " + (this.v[0]).toFixed(1) + "," + (this.v[1]).toFixed(1));
+        //console.log("velocity in updatepos is " + (this.v[0]).toFixed(1) + "," + (this.v[1]).toFixed(1));
 
         this.x_y[0] = this.x_y[0] + this.v[0];
         this.x_y[1] = this.x_y[1] + this.v[1];
@@ -340,14 +343,61 @@ for(var i = 0; i < num_spr; i++)
         spr[i] = new sprite('dragon_FLY_NO_SHADOW_green.png', 6,11,96,96,96,2304, context); //green is odd indices
 
     }
-   console.log("index " + i);
+   //console.log("index " + i);
+}
+
+//change_num_dragons(){
+    //function
+//}
+
+var dragons_slider = document.getElementById("Sprites");
+dragons_slider.addEventListener('input', function(){
+    console.log("dragons slider value changed to " + dragons_slider.value);
+
+    if(dragons_slider.value > num_spr)
+        add_dragons(dragons_slider.value);
+    else
+        delete_dragons(dragons_slider.value);
+});
+
+function delete_dragons(num_dragons){ //num spr is 8, numdragon is 4 -> i starts at num_spr (8 - 1), ends at 4
+    for(var i = num_spr - 1; i > num_dragons; i--)
+    {
+        spr.pop(i);
+        console.log("dragon deleted " + (i - 1) + " dragons." );
+    }
+    console.log("delete dragons called");
+    num_spr = num_dragons;
+
+}
+
+function add_dragons(num_dragons){ //numspr is 2, numdragon is 4 -> i starts at 4-2-1 = 1, ends at 3
+    for(var i = num_dragons - num_spr - 1; i < num_dragons; i++)
+{
+    if(i % 2 == 0)
+    {
+        spr[i] = new sprite('dragon_FLY_NO_SHADOW_blue.png', 6,11,96,96,96,2304, context); //blue is even indices
+    }
+    else
+    {
+        spr[i] = new sprite('dragon_FLY_NO_SHADOW_green.png', 6,11,96,96,96,2304, context); //green is odd indices
+
+    }
+    console.log("dragon added " + (i + 1) + " dragons." );
 }
 
 
+num_spr = num_dragons;
+}
 
-screen.addEventListener('click', function(e) {
+document.getElementById("Pause").addEventListener('click', function(e) {
     //when the canvas is clicked, pause or resume animation
     play = !play;
+});
+
+document.getElementById("Rotation").addEventListener('click', function(){
+    rotation = !rotation;
+    console.log("rotation is " + rotation);
 });
 
 var last_animation_time = new Date().getTime();
@@ -371,19 +421,8 @@ function call_me_on_draw() {
     context.clearRect(0,0,screen.width, screen.height);
     context.drawImage(bk_img, 0, 0, screen.width, screen.height);
 
-    //s.draw();
-    //context.drawImage(s.offscreen, 0, 0);
     for(var j = 0; j < num_spr; j++){
 
-        //console.log("index2 " + j);
-        if(j == 0)
-        {
-            console.log("BLUE DRAGON");
-        }
-        else
-        {
-            console.log("GREEN DRAGON");
-        }
         spr[j].cohesion(j, spr, num_spr);
         spr[j].separation(j, spr, num_spr);
         spr[j].alignment(j, spr, num_spr);
